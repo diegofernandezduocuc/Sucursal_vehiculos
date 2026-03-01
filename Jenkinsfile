@@ -14,21 +14,22 @@ pipeline {
 
         stage('Build Application - Maven') {
             steps {
-                bat 'mvn clean package -DskipTests'
+                sh 'chmod +x mvnw'
+                sh './mvnw clean package -DskipTests'
             }
         }
 
         stage('Docker Image') {
             steps {
-                bat 'docker build -t imagen_vehiculos .'
+                sh 'sudo docker build -t imagen_vehiculos .'
             }
         }
 
         stage('Deployment') {
             steps {
-                bat 'docker stop contenedor_sucursal || exit 0'
-                bat 'docker rm contenedor_sucursal || exit 0'
-                bat 'docker run -d -p 9090:8080 --name contenedor_sucursal imagen_vehiculos'
+                sh 'sudo docker stop contenedor_sucursal || true'
+                sh 'sudo docker rm contenedor_sucursal || true'
+                sh 'sudo docker run -d -p 9090:8080 --name contenedor_sucursal imagen_vehiculos'
             }
         }
     }
