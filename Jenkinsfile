@@ -5,8 +5,13 @@ pipeline {
         maven 'M3'
     }
 
+    environment {
+        JAVA_HOME = '/usr/lib/jvm/java-17-amazon-corretto'
+        PATH = "${env.JAVA_HOME}/bin:${env.PATH}"
+    }
+
     stages {
-        stage('Git Clone') {
+        stage('Clon de Git') {
             steps {
                 git branch: 'main', url: 'https://github.com/diegofernandezduocuc/Sucursal_vehiculos.git'
             }
@@ -21,15 +26,15 @@ pipeline {
 
         stage('Docker Image') {
             steps {
-                sh 'sudo docker build -t imagen_vehiculos .'
+                sh 'docker build -t imagen_vehiculos .'
             }
         }
 
         stage('Deployment') {
             steps {
-                sh 'sudo docker stop contenedor_sucursal || true'
-                sh 'sudo docker rm contenedor_sucursal || true'
-                sh 'sudo docker run -d -p 9090:8080 --name contenedor_sucursal imagen_vehiculos'
+                sh 'docker stop contenedor_sucursal || true'
+                sh 'docker rm contenedor_sucursal || true'
+                sh 'docker run -d -p 9090:8080 --name contenedor_sucursal imagen_vehiculos'
             }
         }
     }
